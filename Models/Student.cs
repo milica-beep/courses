@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace Models;
 
@@ -21,5 +22,6 @@ public class Student
     [MaxLength(50)]
     public required string Lastname { get; set; }
 
+    [JsonIgnore]
     public List<Course>? Courses { get; set; }
 }

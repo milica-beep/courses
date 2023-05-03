@@ -53,7 +53,7 @@ public class StudentController : ControllerBase
     }
 
     [HttpGet("GetStudent/{id}")]
-    public async Task<ActionResult> GetStudent(int id)
+    public ActionResult GetStudent(int id)
     {
         if(id <= 0)
         {
@@ -63,7 +63,7 @@ public class StudentController : ControllerBase
         {
             try
             {
-                var student = await Context.Students.FindAsync(id);
+                var student = Context.Students.Include(s => s.Courses).Where(s => s.Id == id).FirstOrDefault();
                 if(student != null)
                 {
                     return Ok(student);
@@ -143,6 +143,32 @@ public class StudentController : ControllerBase
             {
                 return BadRequest(e.Message);
             }
+        }
+    }
+
+    [HttpGet("GetCourses/{studentId}")]
+    public ActionResult GetCourses(int studentId)
+    {
+        if(studentId < 0)
+        {
+            return BadRequest("invalid id");
+        }
+
+        try
+        {
+            var student = Context.Students.Include(s => s.Courses).Where(c => c.Id == studentId).FirstOrDefault();
+            if(student != null)
+            {
+                return Ok(student.Courses);
+            }
+            else
+            {
+                return BadRequest("invlaid id");
+            }
+        }
+        catch(Exception e)
+        {
+            return BadRequest(e.Message);
         }
     }
 
